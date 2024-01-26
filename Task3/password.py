@@ -2,10 +2,29 @@ import hashlib
 import getpass
 
 def encrypt_password(password):
-    
+    """
+    Encrypts the given password using the MD5 hash function.
+
+    Parameters:
+    - password (str): The password to be encrypted.
+
+    Returns:
+    str: The hexadecimal representation of the MD5 hash of the password.
+    """
+
     return hashlib.md5(password.encode()).hexdigest()
 
 def read_passwd_file(file_path):
+    """
+    Reads a password file and returns a dictionary containing user information.
+
+    Parameters:
+    - file_path (str): The path to the password file.
+
+    Returns:
+    dict: A dictionary where keys are usernames and values are tuples containing real names and encrypted passwords.
+    """
+  
     users = {}
     with open(file_path, 'r') as file:
         for line in file:
@@ -14,20 +33,55 @@ def read_passwd_file(file_path):
     return users
 
 def write_passwd_file(file_path, users):
-    with open(file_path, 'w') as file:
-        for username, (real_name, encrypted_password) in users.items():
-            file.write(f"{username}:{real_name}:{encrypted_password}\n")
+        """
+    Writes user information to a password file.
+
+    Parameters:
+    - file_path (str): The path to the password file.
+    - users (dict): A dictionary where keys are usernames and values are tuples containing real names and encrypted passwords.
+    """
+
+        with open(file_path, 'w') as file:
+            for username, (real_name, encrypted_password) in users.items():
+                file.write(f"{username}:{real_name}:{encrypted_password}\n")
 
 def user_exists(username, users):
+    """
+    Checks if a user with the given username exists in the provided user dictionary.
+
+    Parameters:
+    - username (str): The username to check.
+    - users (dict): A dictionary where keys are usernames and values are tuples containing real names and encrypted passwords.
+
+    Returns:
+    bool: True if the user exists, False otherwise.
+    """
+
     return username in users
 
 def validate_password(username, password, users):
+    """
+    Validates a password for a given username against the stored encrypted password.
+
+    Parameters:
+    - username (str): The username to validate.
+    - password (str): The password to validate.
+    - users (dict): A dictionary where keys are usernames and values are tuples containing real names and encrypted passwords.
+
+    Returns:
+    bool: True if the password is valid, False otherwise.
+    """
+
     if username in users:
         _, encrypted_password = users[username]
         return encrypt_password(password) == encrypted_password
     return False
 
 def add_user():
+    """
+    Adds a new user to the password file, prompting for username, real name, and password.
+    Prints appropriate messages based on success or failure.
+    """
     users = read_passwd_file(file_path)
 
     username = input("Enter new username: ")
@@ -43,6 +97,10 @@ def add_user():
         print("User Created.")
 
 def delete_user():
+    """
+    Deletes a user from the password file, prompting for the username.
+    Prints appropriate messages based on success or failure.
+    """
     users = read_passwd_file(file_path)
 
     username = input("Enter username: ")
@@ -55,6 +113,10 @@ def delete_user():
         print("User not found")
 
 def change_password():
+    """
+    Changes the password for an existing user, prompting for the current password and the new password.
+    Prints appropriate messages based on success or failure.
+    """
     users = read_passwd_file(file_path)
 
     username = input("User: ")
@@ -77,6 +139,10 @@ def change_password():
         print("User not found")
 
 def login():
+    """
+    Authenticates a user by prompting for the username and password.
+    Prints "Access granted" if authentication is successful, "Access denied" otherwise.
+    """
     users = read_passwd_file(file_path)
 
     username = input("User: ")
